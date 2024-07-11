@@ -1,0 +1,62 @@
+body {
+    font-family: "Poppins", sans-serif;
+    background-color: #22577A;
+    margin: 0%;
+}
+
+h1 {
+    display: flex;
+    justify-content: center;
+}
+
+.header {
+    background-color: #38A3A5;
+    display: flex;
+    width: 100%;
+}
+
+#movieSearch {
+    margin-left: auto;
+    margin-right: 1em;
+}
+
+#homeBtn {
+    margin-left: 1em;
+}
+
+#movieList {
+    display: flex;
+    margin: 1em;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-evenly;
+}
+
+.movieWindow {
+    justify-content: space-between;
+    display: flex;
+    flex-wrap: wrap;
+    width: 45%;
+    border: 1px solid black;
+    border-radius: 1%;
+    margin: 1em;
+}
+
+.moviePoster {
+    max-width: 50%;
+    height: auto;
+    margin-left: 1em;
+}
+
+.dirLen {
+    margin-left: 1em;
+}
+
+.director {
+    font-weight: bold;
+}
+
+.titleDesc {
+    width: 45%;
+    margin-left: 1em;
+}
