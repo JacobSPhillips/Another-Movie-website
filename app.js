@@ -14,16 +14,12 @@ form.addEventListener('submit', async (e) => {
 
     const movieRes = await axios.get(`https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=en-US&page=1`, options)
     try {
+        if (movieRes.data.results) { clearSearch() }
         generateMovie(movieRes.data.results, options)
-        console.log(movieRes.data.results)
     } catch {
         console.log('something went wrong')
     }
-
-    // const directors = await axios.get(`https://api.themoviedb.org/3/movie/${movieRes.data.results[0].id}/credits?language=en-US`, options)
-    // try {
-    //     console.log(directors)
-    // } catch { console.log('something went wrong with the first directors') }
+    form.elements.query.value = "";
 })
 
 const generateMovie = async (movies, options) => {
@@ -31,54 +27,64 @@ const generateMovie = async (movies, options) => {
         if (movie.poster_path) {
             // requesting the data that holds the director of the movie and saving it to a const
             const directors = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}/credits?language=en-US`, options)
-            const movieDir = directors.data.crew.filter((director) => director.known_for_department === "Directing")[0].name
+            if (directors.data.crew.filter((director) => director.known_for_department === "Directing")[0]) {
+                const movieDir = directors.data.crew.filter((director) => director.known_for_department === "Directing")[0].name
 
-            //requesting the data that holds the runtime of the movie and saving it to a const
-            const runTime = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}?language=en-US`, options)
-            const movieRunTime = runTime.data.runtime
+                //requesting the data that holds the runtime of the movie and saving it to a const
+                const runTime = await axios.get(`https://api.themoviedb.org/3/movie/${movie.id}?language=en-US`, options)
+                const movieRunTime = runTime.data.runtime
 
-            //saving the movie section to a const
-            const movieList = document.querySelector('#movieList')
-            movieList.classList.add('movieList')
+                //saving the movie section to a const
+                const movieList = document.querySelector('#movieList')
+                movieList.classList.add('movieList')
 
 
-            // creating the movie window
-            const movieWindow = document.createElement('div');
-            movieWindow.classList.add('movieWindow');
+                // creating the movie window
+                const movieWindow = document.createElement('div');
+                movieWindow.classList.add('movieWindow');
 
-            // everything that goes in the window
-            // creating the movie poster
-            const moviePoster = document.createElement('img');
-            moviePoster.src = `https://image.tmdb.org/t/p/original${movie.poster_path}`;
-            moviePoster.classList.add('moviePoster');
+                // everything that goes in the window
+                // creating the movie poster
+                const moviePoster = document.createElement('img');
+                moviePoster.src = `https://image.tmdb.org/t/p/original${movie.poster_path}`;
+                moviePoster.classList.add('moviePoster');
 
-            //creating the title and description div
-            const titleDesc = document.createElement('div');
-            const movieTitle = document.createElement('h2');
-            const description = document.createElement('p');
-            movieTitle.append(movie.original_title);
-            description.append(movie.overview);
-            titleDesc.append(movieTitle);
-            titleDesc.append(description);
-            titleDesc.classList.add('titleDesc')
+                //creating the title and description div
+                const titleDesc = document.createElement('div');
+                const movieTitle = document.createElement('h2');
+                const description = document.createElement('p');
+                movieTitle.append(movie.original_title);
+                description.append(movie.overview);
+                titleDesc.append(movieTitle);
+                titleDesc.append(description);
+                titleDesc.classList.add('titleDesc')
 
-            //creating the div that holds the director and length of movie
-            const dirLen = document.createElement('div');
-            const movieDirector = document.createElement('span');
-            movieDirector.innerText = movieDir;
-            movieDirector.classList.add('director')
-            const movieLen = document.createElement('span');
-            movieLen.append(movieRunTime)
-            dirLen.append(`Directed by ${movieDirector} ${movieLen} min`)
-            dirLen.classList.add('dirLen')
+                //creating the div that holds the director and length of movie
+                const dirLen = document.createElement('div');
+                const movieDirector = document.createElement('span');
+                movieDirector.append(movieDir);
+                movieDirector.classList.add('director')
+                const movieLen = document.createElement('span');
+                movieLen.append(movieRunTime)
+                dirLen.append("Directed by ", movieDirector, " ", movieLen, " min")
+                dirLen.classList.add('dirLen')
 
-            //appending the window to the movie list
-            movieList.append(movieWindow);
+                //appending the window to the movie list
+                movieList.append(movieWindow);
 
-            //appending all the items to the movie window
-            movieWindow.append(moviePoster);
-            movieWindow.append(titleDesc);
-            movieWindow.append(dirLen)
+                //appending all the items to the movie window
+                movieWindow.append(moviePoster);
+                movieWindow.append(titleDesc);
+                movieWindow.append(dirLen)
+            }
+
         }
+    }
+}
+
+const clearSearch = () => {
+    const element = document.getElementById("movieList");
+    while (element.firstChild) {
+        element.removeChild(element.firstChild)
     }
 }
